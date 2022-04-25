@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
+# TODO: excluir seqs com certa qtde de codigos ambiguos (ns)
+# TODO: fazer os gifs com ordem pre-definida
+
 # Imports
 import argparse
-import os
-import re
-import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import logomaker
@@ -14,18 +14,27 @@ from Bio import SeqIO
 # Using ArgParse to make easier use this script using command-line
 # ver como colocar numeros, true e false
 parser = argparse.ArgumentParser()
-parser.add_argument("Path2FastaFile", help="path to fasta file")
+parser.add_argument("fastaFile", help="path to fasta file")
 parser.add_argument("SeqLength", type=int, help="Expected sequence length")
 parser.add_argument("Matrix", help="file to save matrix")
 parser.add_argument('ImageTitle')
 parser.add_argument(
     'AlphaColor', help='Alphabet color. "weblogo_protein", "charge", "chemistry", "hydrophobicity"')
+parser.add_argument('degreeOfUncertainty', type=int,
+                    help='0-100. Proportional of not-known nucleotides that can be present on the sequence')
 parser.add_argument('OnlyKnownCodons', help='TRUE or FALSE')
 parser.add_argument('SequenceLogoType', help='bit or probability')
 parser.add_argument('DataSetType', help='Redundant or NonRedundant')
 parser.add_argument('SeqLogo', help='file to save Sequence logo plot')
 
+
 args = parser.parse_args()
+
+
+seqLength = args.SeqLength / 3
+if int(seqLength) != seqLength:
+    print(f'Your sequence length {args.SeqLength} is not a multiple of 3')
+    exit()
 
 # GET SEQUENCES
 seqDict = {}
@@ -33,23 +42,41 @@ fastaFile = args.Path2FastaFile
 AlphaColor = str(args.AlphaColor).lower()
 
 for record in SeqIO.parse(fastaFile, "fasta"):
-    if len(record.seq) == int(args.SeqLength):
-        if args.DataSetType.upper().strip() == "REDUNDANT":
-            if str(record.seq) in seqDict.keys():
-                seqDict[str(record.seq)] = seqDict[str(record.seq)] + 1
+    notKownNucleotide = 0
+    for nucleotide in record:
+        if nucleotide.upper() not in "ATGC":
+            notKownNucleotide += 1
+    degreeOfUncertainty = 100*notKownNucleotide/args.SeqLength
+    if degreeOfUncertainty <= args.degreeOfUncertainty:
+        if len(record.seq) == int(args.SeqLength):
+            if args.DataSetType.upper().strip() == "REDUNDANT":
+                if str(record.seq) in seqDict.keys():
+                    seqDict[str(record.seq)] = seqDict[str(record.seq)] + 1
+                else:
+                    seqDict[str(record.seq)] = 1
+            elif args.DataSetType.upper().strip() == "NONREDUNDANT":
+                if str(record.seq) not in seqDict.keys():
+                    seqDict[str(record.seq)] = 1
             else:
-                seqDict[str(record.seq)] = 1
-        elif args.DataSetType.upper().strip() == "NONREDUNDANT":
-            if str(record.seq) not in seqDict.keys():
-                seqDict[str(record.seq)] = 1
+                print(
+                    '! Please check if "DataSetType" is spelled correctly - e.g "Redundant or NonRedundant"')
+                exit()
         else:
-            print(
-                '! Please check if "DataSetType" is spelled correctly - e.g "Redundant or NonRedundant"')
-            exit()
+            print('The sequence size is not as expected', fastaFile,
+                  '\t', record.id, " e.g This sequence won't be used")
     else:
-        print('The sequence size is not as expected', fastaFile, '\t', record.id)
+        print(f'The sequence degree of uncertainty {degreeOfUncertainty} is higher than the expected {args.degreeOfUncertainty}', fastaFile,
+              ' ', record.id, " e.g This sequence won't be used")
+
 # print(f'Dicionário das sequências:\n{seqDict}\n')
 
+# Printing how many sequeces were used to construct the Graphs
+totalSeqs = sum(seqDict.values())
+print(
+    f'\nA total of {totalSeqs} sequence(s) was/were used to construct the codon sequence logo')
+if totalSeqs == 0:
+    print('No sequence within the given patterns was found, please review the SeqLength informed or the sequences in FASTA file')
+    exit()
 
 # IMPORTANT DICTS
 matrixDict = {'AAA': [], 'AAC': [], 'AAG': [], 'AAT': [], 'ACA': [], 'ACC': [], 'ACG': [], 'ACT': [], 'AGA': [],
@@ -82,16 +109,16 @@ extraSymbols = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l",
 color_palett = {
     'weblogo_protein':
     {'GCT': 'black', 'GCC': 'black', 'GCA': 'black', 'GCG': 'black', 'TTT': 'black', 'TTC': 'black', 'ATT': 'black', 'ATC': 'black', 'ATA': 'black', 'TTA': 'black', 'TTG': 'black', 'CTT': 'black', 'CTC': 'black', 'CTA': 'black', 'CTG': 'black', 'ATG': 'black', 'CCT': 'black', 'CCC': 'black', 'CCA': 'black', 'CCG': 'black', 'TGG': 'black', 'GTT': 'black', 'GTC': 'black', 'GTA': 'black', 'GTG': 'black', 'TGT': 'lime', 'TGC': 'lime', 'GGT': 'lime', 'GGC': 'lime', 'GGA': 'lime', 'GGG': 'lime', 'TCT': 'lime',
-        'TCC': 'lime', 'TCA': 'lime', 'TCG': 'lime', 'AGT': 'lime', 'AGC': 'lime', 'ACT': 'lime', 'ACC': 'lime', 'ACA': 'lime', 'ACG': 'lime', 'TAT': 'lime', 'TAC': 'lime', 'GAT': 'red', 'GAC': 'red', 'GAA': 'red', 'GAG': 'red', 'CAT': 'blue', 'CAC': 'blue', 'AAA': 'blue', 'AAG': 'blue', 'CGT': 'blue', 'CGC': 'blue', 'CGA': 'blue', 'CGG': 'blue', 'AGA': 'blue', 'AGG': 'blue', 'AAT': 'magenta', 'AAC': 'magenta', 'CAA': 'magenta', 'CAG': 'magenta', 'TAA': 'peru', 'TAG': 'gold', 'TGA': 'lightgray'},
+        'TCC': 'lime', 'TCA': 'lime', 'TCG': 'lime', 'AGT': 'lime', 'AGC': 'lime', 'ACT': 'lime', 'ACC': 'lime', 'ACA': 'lime', 'ACG': 'lime', 'TAT': 'lime', 'TAC': 'lime', 'GAT': 'red', 'GAC': 'red', 'GAA': 'red', 'GAG': 'red', 'CAT': 'blue', 'CAC': 'blue', 'AAA': 'blue', 'AAG': 'blue', 'CGT': 'blue', 'CGC': 'blue', 'CGA': 'blue', 'CGG': 'blue', 'AGA': 'blue', 'AGG': 'blue', 'AAT': 'magenta', 'AAC': 'magenta', 'CAA': 'magenta', 'CAG': 'magenta', 'TAA': 'peru', 'TAG': 'gold', 'TGA': 'azure'},
     'charge':
     {'GCT': 'dimgrey', 'GCC': 'dimgrey', 'GCA': 'dimgrey', 'GCG': 'dimgrey', 'TTT': 'dimgrey', 'TTC': 'dimgrey', 'ATT': 'dimgrey', 'ATC': 'dimgrey', 'ATA': 'dimgrey', 'TTA': 'dimgrey', 'TTG': 'dimgrey', 'CTT': 'dimgrey', 'CTC': 'dimgrey', 'CTA': 'dimgrey', 'CTG': 'dimgrey', 'ATG': 'dimgrey', 'CCT': 'dimgrey', 'CCC': 'dimgrey', 'CCA': 'dimgrey', 'CCG': 'dimgrey', 'TGG': 'dimgrey', 'GTT': 'dimgrey', 'GTC': 'dimgrey', 'GTA': 'dimgrey', 'GTG': 'dimgrey', 'TGT': 'dimgrey', 'TGC': 'dimgrey', 'GGT': 'dimgrey', 'GGC': 'dimgrey', 'GGA': 'dimgrey', 'GGG': 'dimgrey', 'TCT': 'dimgrey',
-        'TCC': 'dimgrey', 'TCA': 'dimgrey', 'TCG': 'dimgrey', 'AGT': 'dimgrey', 'AGC': 'dimgrey', 'ACT': 'dimgrey', 'ACC': 'dimgrey', 'ACA': 'dimgrey', 'ACG': 'dimgrey', 'TAT': 'dimgrey', 'TAC': 'dimgrey', 'GAT': 'red', 'GAC': 'red', 'GAA': 'red', 'GAG': 'red', 'CAT': 'mediumblue', 'CAC': 'mediumblue', 'AAA': 'mediumblue', 'AAG': 'mediumblue', 'CGT': 'mediumblue', 'CGC': 'mediumblue', 'CGA': 'mediumblue', 'CGG': 'mediumblue', 'AGA': 'mediumblue', 'AGG': 'mediumblue', 'AAT': 'dimgrey', 'AAC': 'dimgrey', 'CAA': 'dimgrey', 'CAG': 'dimgrey', 'TAA': 'peru', 'TAG': 'gold', 'TGA': 'lightgray'},
+        'TCC': 'dimgrey', 'TCA': 'dimgrey', 'TCG': 'dimgrey', 'AGT': 'dimgrey', 'AGC': 'dimgrey', 'ACT': 'dimgrey', 'ACC': 'dimgrey', 'ACA': 'dimgrey', 'ACG': 'dimgrey', 'TAT': 'dimgrey', 'TAC': 'dimgrey', 'GAT': 'red', 'GAC': 'red', 'GAA': 'red', 'GAG': 'red', 'CAT': 'mediumblue', 'CAC': 'mediumblue', 'AAA': 'mediumblue', 'AAG': 'mediumblue', 'CGT': 'mediumblue', 'CGC': 'mediumblue', 'CGA': 'mediumblue', 'CGG': 'mediumblue', 'AGA': 'mediumblue', 'AGG': 'mediumblue', 'AAT': 'dimgrey', 'AAC': 'dimgrey', 'CAA': 'dimgrey', 'CAG': 'dimgrey', 'TAA': 'peru', 'TAG': 'gold', 'TGA': 'azure'},
     'hydrophobicity':
     {'GCT': 'green', 'GCC': 'green', 'GCA': 'green', 'GCG': 'green', 'TTT': 'black', 'TTC': 'black', 'ATT': 'black', 'ATC': 'black', 'ATA': 'black', 'TTA': 'black', 'TTG': 'black', 'CTT': 'black', 'CTC': 'black', 'CTA': 'black', 'CTG': 'black', 'ATG': 'black', 'CCT': 'green', 'CCC': 'green', 'CCA': 'green', 'CCG': 'green', 'TGG': 'black', 'GTT': 'black', 'GTC': 'black', 'GTA': 'black', 'GTG': 'black', 'TGT': 'black', 'TGC': 'black', 'GGT': 'green', 'GGC': 'green', 'GGA': 'green', 'GGG': 'green', 'TCT': 'green', 'TCC': 'green', 'TCA': 'green', 'TCG': 'green',
-        'AGT': 'green', 'AGC': 'green', 'ACT': 'green', 'ACC': 'green', 'ACA': 'green', 'ACG': 'green', 'TAT': 'black', 'TAC': 'black', 'GAT': 'mediumblue', 'GAC': 'mediumblue', 'GAA': 'mediumblue', 'GAG': 'mediumblue', 'CAT': 'green', 'CAC': 'green', 'AAA': 'mediumblue', 'AAG': 'mediumblue', 'CGT': 'mediumblue', 'CGC': 'mediumblue', 'CGA': 'mediumblue', 'CGG': 'mediumblue', 'AGA': 'mediumblue', 'AGG': 'mediumblue', 'AAT': 'mediumblue', 'AAC': 'mediumblue', 'CAA': 'mediumblue', 'CAG': 'mediumblue', 'TAA': 'peru', 'TAG': 'gold', 'TGA': 'lightgray'},
+        'AGT': 'green', 'AGC': 'green', 'ACT': 'green', 'ACC': 'green', 'ACA': 'green', 'ACG': 'green', 'TAT': 'black', 'TAC': 'black', 'GAT': 'mediumblue', 'GAC': 'mediumblue', 'GAA': 'mediumblue', 'GAG': 'mediumblue', 'CAT': 'green', 'CAC': 'green', 'AAA': 'mediumblue', 'AAG': 'mediumblue', 'CGT': 'mediumblue', 'CGC': 'mediumblue', 'CGA': 'mediumblue', 'CGG': 'mediumblue', 'AGA': 'mediumblue', 'AGG': 'mediumblue', 'AAT': 'mediumblue', 'AAC': 'mediumblue', 'CAA': 'mediumblue', 'CAG': 'mediumblue', 'TAA': 'peru', 'TAG': 'gold', 'TGA': 'azure'},
     'chemistry':
     {'GCT': 'black', 'GCC': 'black', 'GCA': 'black', 'GCG': 'black', 'TTT': 'black', 'TTC': 'black', 'ATT': 'black', 'ATC': 'black', 'ATA': 'black', 'TTA': 'black', 'TTG': 'black', 'CTT': 'black', 'CTC': 'black', 'CTA': 'black', 'CTG': 'black', 'ATG': 'black', 'CCT': 'black', 'CCC': 'black', 'CCA': 'black', 'CCG': 'black', 'TGG': 'black', 'GTT': 'black', 'GTC': 'black', 'GTA': 'black', 'GTG': 'black', 'TGT': 'lime', 'TGC': 'lime', 'GGT': 'lime', 'GGC': 'lime', 'GGA': 'lime', 'GGG': 'lime', 'TCT': 'lime', 'TCC': 'lime', 'TCA': 'lime',
-        'TCG': 'lime', 'AGT': 'lime', 'AGC': 'lime', 'ACT': 'lime', 'ACC': 'lime', 'ACA': 'lime', 'ACG': 'lime', 'TAT': 'lime', 'TAC': 'lime', 'GAT': 'red', 'GAC': 'red', 'GAA': 'red', 'GAG': 'red', 'CAT': 'mediumblue', 'CAC': 'mediumblue', 'AAA': 'mediumblue', 'AAG': 'mediumblue', 'CGT': 'mediumblue', 'CGC': 'mediumblue', 'CGA': 'mediumblue', 'CGG': 'mediumblue', 'AGA': 'mediumblue', 'AGG': 'mediumblue', 'AAT': 'purple', 'AAC': 'purple', 'CAA': 'purple', 'CAG': 'purple', 'TAA': 'peru', 'TAG': 'gold', 'TGA': 'lightgray'}
+        'TCG': 'lime', 'AGT': 'lime', 'AGC': 'lime', 'ACT': 'lime', 'ACC': 'lime', 'ACA': 'lime', 'ACG': 'lime', 'TAT': 'lime', 'TAC': 'lime', 'GAT': 'red', 'GAC': 'red', 'GAA': 'red', 'GAG': 'red', 'CAT': 'mediumblue', 'CAC': 'mediumblue', 'AAA': 'mediumblue', 'AAG': 'mediumblue', 'CGT': 'mediumblue', 'CGC': 'mediumblue', 'CGA': 'mediumblue', 'CGG': 'mediumblue', 'AGA': 'mediumblue', 'AGG': 'mediumblue', 'AAT': 'purple', 'AAC': 'purple', 'CAA': 'purple', 'CAG': 'purple', 'TAA': 'peru', 'TAG': 'gold', 'TGA': 'azure'}
 }
 
 # DEFINING THE POSITIONS OF THE CODONS IN THE SEQUENCE
@@ -104,7 +131,6 @@ for seq, amount in seqDict.items():
         codon = (seq[cropPos: cropPos + ntAmount]).upper()
 
         codons.append(codon)
-    # print(f'codons list = {codons}')  # it can be removed
     for codon_index in range(int((len(seq)) / ntAmount)):
         if args.OnlyKnownCodons.upper().strip() == "FALSE":
             if codons[codon_index].upper() not in matrixDict.keys():
@@ -128,7 +154,7 @@ for seq, amount in seqDict.items():
                 else:
                     posDict[codon_index][codons[codon_index]] = seqDict[seq]
     codons = []
-#print(f'Dicionário das Posições:\n{posDict}\n')
+# print(f'Dicionário das Posições:\n{posDict}\n')
 
 # BUILDING THE MATRICES
 for pos in posDict.keys():
@@ -154,14 +180,14 @@ MatrixProb.to_csv(sep="\t", header=True,
                   path_or_buf=MatraixProb_name, index=True)
 # print(f'Matrix Prob: \n{MatrixProb}\n')
 
-# Build probability symbol matrix
-matrixSymbol_name = 'probability_' + args.Matrix + '_symbol'
-MatrixProbSymbol = pd.DataFrame(matrixSimb)
-MatrixProbSymbol.to_csv(sep="\t", header=True,
-                        path_or_buf=matrixSymbol_name, index=True)
-# print(f'Matrix de Símbolos: \n{MatrixProbSymbol}\n')
-
 if args.SequenceLogoType.upper().strip() == "BIT":
+    # Build probability symbol matrix
+    matrixSymbol_name = 'probability_' + args.Matrix + '_symbol'
+    MatrixProbSymbol = pd.DataFrame(matrixSimb)
+    MatrixProbSymbol.to_csv(sep="\t", header=True,
+                            path_or_buf=matrixSymbol_name, index=True)
+    # print(f'Matrix de Símbolos: \n{MatrixProbSymbol}\n')
+
     # Converting probability matrix to information (bits) matrix
     matrixValid = logomaker.validate_matrix(
         MatrixProbSymbol, matrix_type='probability', allow_nan=True)
@@ -242,10 +268,11 @@ for codons in PreListInfo2Glyph:
         })
 # print(f'Glyph final list: \n{ListInfo2Glyph}\n')
 
-fig, ax = plt.subplots(figsize=[7, 4])
+x = args.SeqLength/2
+fig, ax = plt.subplots(figsize=[x, 4])
 # set bounding box
 ax.set_xlim([0.5, (args.SeqLength + 1)])
-ax.set_ylim([0, 8])
+ax.set_ylim([0, 6])
 
 
 def generate_glyph(c, p, width, ceiling, ax, floor, color):
