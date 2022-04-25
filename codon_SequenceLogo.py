@@ -9,7 +9,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import logomaker
 from logomaker import Glyph
-from Bio import SeqIO
+#from Bio import SeqIO
+from Bio import AlignIO
 
 # Using ArgParse to make easier use this script using command-line
 # ver como colocar numeros, true e false
@@ -30,18 +31,20 @@ parser.add_argument('SeqLogo', help='file to save Sequence logo plot')
 
 args = parser.parse_args()
 
+# GET SEQUENCES
+seqDict = {}
+fastaFile = args.fastaFile
+alignment = AlignIO.read(fastaFile, "fasta")
+AlphaColor = str(args.AlphaColor).lower()
 
-seqLength = args.SeqLength / 3
-if int(seqLength) != seqLength:
+#Check that the alignment has complete codons, length should be multiple of 3
+
+if alignment.get_alignment_length() % 3 != 0:
     print(f'Your sequence length {args.SeqLength} is not a multiple of 3')
     exit()
 
-# GET SEQUENCES
-seqDict = {}
-fastaFile = args.Path2FastaFile
-AlphaColor = str(args.AlphaColor).lower()
 
-for record in SeqIO.parse(fastaFile, "fasta"):
+for record in alignment:
     notKownNucleotide = 0
     for nucleotide in record:
         if nucleotide.upper() not in "ATGC":
