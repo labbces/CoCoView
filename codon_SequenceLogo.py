@@ -21,8 +21,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("fastaFile", help="path to fasta file, must have extension fasta, or fa")
 parser.add_argument('--prefixFileName', help="String to use as prefix of output file names, if not provided will use fastaFile as prefix")
 parser.add_argument('--imageTitle', help="String to use as title in the image")
-parser.add_argument(
-    'AlphaColor', help='Alphabet color. "weblogo_protein", "charge", "chemistry", "hydrophobicity"')
+parser.add_argument('--alphaColor', choices=['weblogo_protein', 'charge', 'chemistry', 'hydrophobicity'], help='Alphabet color scheme', default='weblogo_protein')
 parser.add_argument('degreeOfUncertainty', type=int,
                     help='0-100. Proportional of not-known nucleotides that can be present on the sequence')
 parser.add_argument('OnlyKnownCodons', help='TRUE or FALSE')
@@ -32,6 +31,7 @@ parser.add_argument('DataSetType', help='Redundant or NonRedundant')
 
 args = parser.parse_args()
 
+print(args.alphaColor)
 #Checking that input file exists, and has the right extension
 if exists(args.fastaFile):
     if args.fastaFile.endswith('.fa') or args.fastaFile.endswith('.fasta'):
@@ -63,7 +63,7 @@ else:
 seqDict = {}
 alignment = AlignIO.read(fastaFile, "fasta")
 SeqLength = alignment.get_alignment_length()
-AlphaColor = str(args.AlphaColor).lower()
+AlphaColor = str(args.alphaColor).lower()
 
 #Check that the alignment has complete codons, length should be multiple of 3
 
