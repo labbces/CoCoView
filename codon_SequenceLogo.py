@@ -53,9 +53,9 @@ else:
 #Did we get an image title  from the user?
 # If not use the basename of the input file with the string CodonLogo
 if args.imageTitle:
-    imageTitle = args.imageTitle
+    imageTitle = args.imageTitle + ' ' + args.datasetType + ' CodonLogo'
 else:
-    imageTitle = re.sub('.fa(sta)?','',fastaFile) + ' CodonLogo'
+    imageTitle = re.sub('.fa(sta)?','',fastaFile) + ' ' + args.datasetType +' CodonLogo'
     print(f'{imageTitle}')
 # GET SEQUENCES
 seqDict = {}
