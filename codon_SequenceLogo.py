@@ -22,8 +22,7 @@ parser.add_argument("fastaFile", help="path to fasta file, must have extension f
 parser.add_argument('--prefixFileName', help="String to use as prefix of output file names, if not provided will use fastaFile as prefix")
 parser.add_argument('--imageTitle', help="String to use as title in the image")
 parser.add_argument('--alphaColor', choices=['weblogo_protein', 'charge', 'chemistry', 'hydrophobicity'], help='Alphabet color scheme', default='weblogo_protein')
-parser.add_argument('degreeOfUncertainty', type=int,
-                    help='0-100. Proportional of not-known nucleotides that can be present on the sequence')
+parser.add_argument('--degreeOfUncertainty', type=float, default=0.0, help='Proportion of ambiguous nucleotides allowed in the sequences to use in the logo')
 parser.add_argument('OnlyKnownCodons', help='TRUE or FALSE')
 parser.add_argument('--matrixLogoType', help='Type of matrix to built', default='probability', choices=['bit','probability'])
 parser.add_argument('DataSetType', help='Redundant or NonRedundant')
@@ -31,7 +30,6 @@ parser.add_argument('DataSetType', help='Redundant or NonRedundant')
 
 args = parser.parse_args()
 
-print(args.alphaColor)
 #Checking that input file exists, and has the right extension
 if exists(args.fastaFile):
     if args.fastaFile.endswith('.fa') or args.fastaFile.endswith('.fasta'):
