@@ -16,6 +16,7 @@ import re
 # Using ArgParse to make easier use this script using command-line
 # ver como colocar numeros, true e false
 parser = argparse.ArgumentParser()
+<<<<<<< HEAD
 parser.add_argument(
     "fastaFile", help="path to fasta file, must have extension fasta, or fa")
 parser.add_argument('-p', '--prefixFileName',
@@ -33,6 +34,17 @@ parser.add_argument('-t', '--datasetType', help='whether to built a reduntand o 
                     default='redundant', choices=['redundant', 'nonredundant'])
 parser.add_argument('-l', '--logoFormat', help='Format of the sequence logo',
                     default='png', choices=['png', 'pdf'])
+=======
+parser.add_argument("fastaFile", help="path to fasta file, must have extension fasta, or fa")
+parser.add_argument('-p','--prefixFileName', help="String to use as prefix of output file names, if not provided will use fastaFile as prefix")
+parser.add_argument('-i','--imageTitle', help="String to use as title in the image")
+parser.add_argument('-a','--alphaColor', choices=['weblogo_protein', 'charge', 'chemistry', 'hydrophobicity'], help='Alphabet color scheme', default='weblogo_protein')
+parser.add_argument('-d','--degreeOfUncertainty', type=float, default=0.0, help='Proportion of ambiguous nucleotides allowed in the sequences to use in the logo')
+parser.add_argument('OnlyKnownCodons', help='TRUE or FALSE')
+parser.add_argument('-m','--matrixLogoType', help='Type of matrix to built', default='probability', choices=['bit','probability'])
+parser.add_argument('-t','--datasetType', help='whether to built a reduntand o non-redundant dataset before creating the logo', default='redundant', choices=['redundant','nonredundant'])  
+parser.add_argument('-l','--logoFormat', help='Format of the sequence logo', default='png', choices=['png','pdf'])  
+>>>>>>> refs/remotes/origin/main
 
 
 args = parser.parse_args()
@@ -350,6 +362,11 @@ elif args.matrixLogoType.upper().strip() == "PROBABILITY":
     ax.set_ylabel('probability')
     ax.set_ylim([0, 1])
 
+<<<<<<< HEAD
 figsave_name = prefixFileName + '.' + \
     args.datasetType + '.SeqLogo' + '.' + args.logoFormat
 fig.savefig(figsave_name, transparent=False, format=args.logoFormat)
+=======
+figsave_name = prefixFileName +  '.' + args.datasetType + '.SeqLogo' + '.' + args.logoFormat
+fig.savefig(figsave_name, transparent=False, format = args.logoFormat)
+>>>>>>> refs/remotes/origin/main
