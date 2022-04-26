@@ -25,7 +25,7 @@ parser.add_argument('--alphaColor', choices=['weblogo_protein', 'charge', 'chemi
 parser.add_argument('degreeOfUncertainty', type=int,
                     help='0-100. Proportional of not-known nucleotides that can be present on the sequence')
 parser.add_argument('OnlyKnownCodons', help='TRUE or FALSE')
-parser.add_argument('SequenceLogoType', help='bit or probability')
+parser.add_argument('--matrixLogoType', help='Type of matrix to built', default='probability', choices=['bit','probability'])
 parser.add_argument('DataSetType', help='Redundant or NonRedundant')
 
 
@@ -212,7 +212,7 @@ MatrixProb.to_csv(sep="\t", header=True,
                   path_or_buf=MatraixProb_name, index=True)
 # print(f'Matrix Prob: \n{MatrixProb}\n')
 
-if args.SequenceLogoType.upper().strip() == "BIT":
+if args.matrixLogoType.upper().strip() == "BIT":
     # Build probability symbol matrix
     matrixSymbol_name = prefixFileName + '.probability' + '.symbol'
     MatrixProbSymbol = pd.DataFrame(matrixSimb)
@@ -233,7 +233,7 @@ if args.SequenceLogoType.upper().strip() == "BIT":
 
 # TRANSLATING SYMBOL BIT MATRICES TO CODON BIT MATRICES
 # Dictionary symbols to codons
-if args.SequenceLogoType.upper().strip() == "BIT":
+if args.matrixLogoType.upper().strip() == "BIT":
     Symbols2Codon = {}
     for symbol in matrixBit.columns:
         Codon = list(Codon2Symbol.keys())[
@@ -249,14 +249,14 @@ if args.SequenceLogoType.upper().strip() == "BIT":
 
 
 # TRANSFORMING MATRICES TO DICTIONARIES TO DEFINE GHYPH PARAMETERS
-if args.SequenceLogoType.upper().strip() == "BIT":
+if args.matrixLogoType.upper().strip() == "BIT":
     matrixInfo = matrixBit.to_dict('Dict')
     dictCodon = {}
     for simb in matrixInfo.keys():
         for k, v in Codon2Symbol.items():
             dictCodon[k] = matrixInfo[v]
     # print(f'Dict dos bits dos codons:\n{dictCodon}\n')
-elif args.SequenceLogoType.upper().strip() == "PROBABILITY":
+elif args.matrixLogoType.upper().strip() == "PROBABILITY":
     dictCodon = MatrixProb.to_dict('Dict')
     # print(f"Matrix Prob info \n {dictCodon}")
 
@@ -335,9 +335,9 @@ title = f'{imageTitle}'
 ax.set_title(title)
 ax.set_xlabel('length')
 
-if args.SequenceLogoType.upper().strip() == "BIT":
+if args.matrixLogoType.upper().strip() == "BIT":
     ax.set_ylabel('information (bits)')
-elif args.SequenceLogoType.upper().strip() == "PROBABILITY":
+elif args.matrixLogoType.upper().strip() == "PROBABILITY":
     ax.set_ylabel('probability')
     ax.set_ylim([0, 1])
 
