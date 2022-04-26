@@ -25,7 +25,7 @@ parser.add_argument('--alphaColor', choices=['weblogo_protein', 'charge', 'chemi
 parser.add_argument('--degreeOfUncertainty', type=float, default=0.0, help='Proportion of ambiguous nucleotides allowed in the sequences to use in the logo')
 parser.add_argument('OnlyKnownCodons', help='TRUE or FALSE')
 parser.add_argument('--matrixLogoType', help='Type of matrix to built', default='probability', choices=['bit','probability'])
-parser.add_argument('DataSetType', help='Redundant or NonRedundant')
+parser.add_argument('--datasetType', help='whether to built a reduntand o non-redundant dataset before creating the logo', default='redundant', choices=['redundant','nonredundant'])  
 
 
 args = parser.parse_args()
@@ -78,12 +78,12 @@ for record in alignment:
     degreeOfUncertainty = 100*notKnownNucleotide/SeqLength
     if degreeOfUncertainty <= args.degreeOfUncertainty:
         if len(record.seq) == int(SeqLength):
-            if args.DataSetType.upper().strip() == "REDUNDANT":
+            if args.datasetType.upper().strip() == "REDUNDANT":
                 if str(record.seq) in seqDict.keys():
                     seqDict[str(record.seq)] = seqDict[str(record.seq)] + 1
                 else:
                     seqDict[str(record.seq)] = 1
-            elif args.DataSetType.upper().strip() == "NONREDUNDANT":
+            elif args.datasetType.upper().strip() == "NONREDUNDANT":
                 if str(record.seq) not in seqDict.keys():
                     seqDict[str(record.seq)] = 1
             else:
@@ -205,14 +205,14 @@ for codon in matrixDict.keys():
 
 # Build Probability Matrix
 MatrixProb = pd.DataFrame(matrixDict)
-MatraixProb_name = prefixFileName + '.probability.matrix'
+MatraixProb_name = prefixFileName + '.' + args.datasetType + '.probability.matrix'
 MatrixProb.to_csv(sep="\t", header=True,
                   path_or_buf=MatraixProb_name, index=True)
 # print(f'Matrix Prob: \n{MatrixProb}\n')
 
 if args.matrixLogoType.upper().strip() == "BIT":
     # Build probability symbol matrix
-    matrixSymbol_name = prefixFileName + '.probability' + '.symbol'
+    matrixSymbol_name = prefixFileName +  '.' + args.datasetType + '.probability' + '.symbol'
     MatrixProbSymbol = pd.DataFrame(matrixSimb)
     MatrixProbSymbol.to_csv(sep="\t", header=True,
                             path_or_buf=matrixSymbol_name, index=True)
@@ -223,7 +223,7 @@ if args.matrixLogoType.upper().strip() == "BIT":
         MatrixProbSymbol, matrix_type='probability', allow_nan=True)
     matrixBit = logomaker.transform_matrix(
         matrixValid, from_type='probability', to_type='information')
-    matrixBit_name = prefixFileName + '.bits.matrix'
+    matrixBit_name = prefixFileName +  '.' + args.datasetType + '.bits.matrix'
     matrixBit.to_csv(sep="\t", header=True,
                      path_or_buf=matrixBit_name, index=True)
     # print(f'Matrix de Bits:\n{matrixBit}\n')
@@ -240,7 +240,7 @@ if args.matrixLogoType.upper().strip() == "BIT":
     # print(f'Symbols 2 codon: \n {Symbols2Codon}')
 
     bit_matrix_codon = matrixBit.rename(Symbols2Codon, axis='columns')
-    matrixCodonBit_name = prefixFileName + '.bits.matrix'
+    matrixCodonBit_name = prefixFileName +  '.' + args.datasetType + '.bits.matrix'
     bit_matrix_codon.to_csv(sep="\t", header=True,
                             path_or_buf=matrixCodonBit_name, index=True)
     # print(f'Bit matrix codon: \n{bit_matrix_codon}\n')
@@ -339,5 +339,5 @@ elif args.matrixLogoType.upper().strip() == "PROBABILITY":
     ax.set_ylabel('probability')
     ax.set_ylim([0, 1])
 
-figsave_name = prefixFileName + '.SeqLogo' + '.png'
+figsave_name = prefixFileName +  '.' + args.datasetType + '.SeqLogo' + '.png'
 fig.savefig(figsave_name, transparent=False)
