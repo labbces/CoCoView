@@ -13,8 +13,6 @@ from Bio import AlignIO
 from os.path import exists
 import re
 
-from sqlalchemy import true
-
 # Using ArgParse to make easier use this script using command-line
 # ver como colocar numeros, true e false
 parser = argparse.ArgumentParser()
