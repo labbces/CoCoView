@@ -16,19 +16,28 @@ import re
 # Using ArgParse to make easier use this script using command-line
 # ver como colocar numeros, true e false
 parser = argparse.ArgumentParser()
-parser.add_argument("fastaFile", help="path to fasta file, must have extension fasta, or fa")
-parser.add_argument('-p,--prefixFileName', help="String to use as prefix of output file names, if not provided will use fastaFile as prefix")
-parser.add_argument('-i,--imageTitle', help="String to use as title in the image")
-parser.add_argument('-a,--alphaColor', choices=['weblogo_protein', 'charge', 'chemistry', 'hydrophobicity'], help='Alphabet color scheme', default='weblogo_protein')
-parser.add_argument('-d,--degreeOfUncertainty', type=float, default=0.0, help='Proportion of ambiguous nucleotides allowed in the sequences to use in the logo')
+parser.add_argument(
+    "fastaFile", help="path to fasta file, must have extension fasta, or fa")
+parser.add_argument('-p', '--prefixFileName',
+                    help="String to use as prefix of output file names, if not provided will use fastaFile as prefix")
+parser.add_argument('-i', '--imageTitle',
+                    help="String to use as title in the image")
+parser.add_argument('-a', '--alphaColor', choices=['weblogo_protein', 'charge', 'chemistry',
+                    'hydrophobicity'], help='Alphabet color scheme', default='weblogo_protein')
+parser.add_argument('-d', '--degreeOfUncertainty', type=float, default=0.0,
+                    help='Proportion of ambiguous nucleotides allowed in the sequences to use in the logo')
 parser.add_argument('OnlyKnownCodons', help='TRUE or FALSE')
-parser.add_argument('-m,--matrixLogoType', help='Type of matrix to built', default='probability', choices=['bit','probability'])
-parser.add_argument('-t,--datasetType', help='whether to built a reduntand o non-redundant dataset before creating the logo', default='redundant', choices=['redundant','nonredundant'])  
+parser.add_argument('-m', '--matrixLogoType', help='Type of matrix to built',
+                    default='probability', choices=['bit', 'probability'])
+parser.add_argument('-t', '--datasetType', help='whether to built a reduntand o non-redundant dataset before creating the logo',
+                    default='redundant', choices=['redundant', 'nonredundant'])
+parser.add_argument('-l', '--logoFormat', help='Format of the sequence logo',
+                    default='png', choices=['png', 'pdf'])
 
 
 args = parser.parse_args()
 
-#Checking that input file exists, and has the right extension
+# Checking that input file exists, and has the right extension
 if exists(args.fastaFile):
     if args.fastaFile.endswith('.fa') or args.fastaFile.endswith('.fasta'):
         fastaFile = args.fastaFile
@@ -41,19 +50,20 @@ else:
     parser.print_help()
     exit()
 
-#Did we get a prefix to create outfiles from the user?
+# Did we get a prefix to create outfiles from the user?
 # If not use the basename of the input file as prefix
 if args.prefixFileName:
     prefixFileName = args.prefixFileName
 else:
-    prefixFileName = re.sub('.fa(sta)?','',fastaFile)
+    prefixFileName = re.sub('.fa(sta)?', '', fastaFile)
 
-#Did we get an image title  from the user?
+# Did we get an image title  from the user?
 # If not use the basename of the input file with the string CodonLogo
 if args.imageTitle:
     imageTitle = args.imageTitle + ' ' + args.datasetType + ' CodonLogo'
 else:
-    imageTitle = re.sub('.fa(sta)?','',fastaFile) + ' ' + args.datasetType +' CodonLogo'
+    imageTitle = re.sub('.fa(sta)?', '', fastaFile) + \
+        ' ' + args.datasetType + ' CodonLogo'
     print(f'{imageTitle}')
 # GET SEQUENCES
 seqDict = {}
@@ -61,7 +71,7 @@ alignment = AlignIO.read(fastaFile, "fasta")
 SeqLength = alignment.get_alignment_length()
 AlphaColor = str(args.alphaColor).lower()
 
-#Check that the alignment has complete codons, length should be multiple of 3
+# Check that the alignment has complete codons, length should be multiple of 3
 
 if SeqLength % 3 != 0:
     print(f'Your sequence length {args.SeqLength} is not a multiple of 3')
@@ -104,7 +114,8 @@ if totalSeqs == 0:
     print('All sequences were filtered out, nothing remained to generate the Codon Sequence Logo')
     exit()
 else:
-    print(f'\nA total of {totalSeqs} sequence(s) was/were used to construct the codon sequence logo')
+    print(
+        f'\nA total of {totalSeqs} sequence(s) was/were used to construct the codon sequence logo')
 
 # IMPORTANT DICTS
 matrixDict = {'AAA': [], 'AAC': [], 'AAG': [], 'AAT': [], 'ACA': [], 'ACC': [], 'ACG': [], 'ACT': [], 'AGA': [],
@@ -203,14 +214,16 @@ for codon in matrixDict.keys():
 
 # Build Probability Matrix
 MatrixProb = pd.DataFrame(matrixDict)
-MatraixProb_name = prefixFileName + '.' + args.datasetType + '.probability.matrix'
+MatraixProb_name = prefixFileName + '.' + \
+    args.datasetType + '.probability.matrix'
 MatrixProb.to_csv(sep="\t", header=True,
                   path_or_buf=MatraixProb_name, index=True)
 # print(f'Matrix Prob: \n{MatrixProb}\n')
 
 if args.matrixLogoType.upper().strip() == "BIT":
     # Build probability symbol matrix
-    matrixSymbol_name = prefixFileName +  '.' + args.datasetType + '.probability' + '.symbol'
+    matrixSymbol_name = prefixFileName + '.' + \
+        args.datasetType + '.probability' + '.symbol'
     MatrixProbSymbol = pd.DataFrame(matrixSimb)
     MatrixProbSymbol.to_csv(sep="\t", header=True,
                             path_or_buf=matrixSymbol_name, index=True)
@@ -221,7 +234,7 @@ if args.matrixLogoType.upper().strip() == "BIT":
         MatrixProbSymbol, matrix_type='probability', allow_nan=True)
     matrixBit = logomaker.transform_matrix(
         matrixValid, from_type='probability', to_type='information')
-    matrixBit_name = prefixFileName +  '.' + args.datasetType + '.bits.matrix'
+    matrixBit_name = prefixFileName + '.' + args.datasetType + '.bits.matrix'
     matrixBit.to_csv(sep="\t", header=True,
                      path_or_buf=matrixBit_name, index=True)
     # print(f'Matrix de Bits:\n{matrixBit}\n')
@@ -238,7 +251,7 @@ if args.matrixLogoType.upper().strip() == "BIT":
     # print(f'Symbols 2 codon: \n {Symbols2Codon}')
 
     bit_matrix_codon = matrixBit.rename(Symbols2Codon, axis='columns')
-    matrixCodonBit_name = prefixFileName +  '.' + args.datasetType + '.bits.matrix'
+    matrixCodonBit_name = prefixFileName + '.' + args.datasetType + '.bits.matrix'
     bit_matrix_codon.to_csv(sep="\t", header=True,
                             path_or_buf=matrixCodonBit_name, index=True)
     # print(f'Bit matrix codon: \n{bit_matrix_codon}\n')
@@ -337,5 +350,6 @@ elif args.matrixLogoType.upper().strip() == "PROBABILITY":
     ax.set_ylabel('probability')
     ax.set_ylim([0, 1])
 
-figsave_name = prefixFileName +  '.' + args.datasetType + '.SeqLogo' + '.png'
-fig.savefig(figsave_name, transparent=False)
+figsave_name = prefixFileName + '.' + \
+    args.datasetType + '.SeqLogo' + '.' + args.logoFormat
+fig.savefig(figsave_name, transparent=False, format=args.logoFormat)
