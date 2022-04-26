@@ -10,13 +10,16 @@ import matplotlib.pyplot as plt
 import logomaker
 from logomaker import Glyph
 from Bio import AlignIO
+import re
+
+from sqlalchemy import true
 
 # Using ArgParse to make easier use this script using command-line
 # ver como colocar numeros, true e false
 parser = argparse.ArgumentParser()
-parser.add_argument("fastaFile", help="path to fasta file")
-parser.add_argument("Matrix", help="file to save matrix")
-parser.add_argument('ImageTitle')
+parser.add_argument("fastaFile", help="path to fasta file, must have extension fasta, or fa")
+parser.add_argument("--prefixFileName", help="String to use as prefix of output file names, if not provided will use fastaFile as prefix")
+parser.add_argument('ImageTitle', help="String to use as title in the image")
 parser.add_argument(
     'AlphaColor', help='Alphabet color. "weblogo_protein", "charge", "chemistry", "hydrophobicity"')
 parser.add_argument('degreeOfUncertainty', type=int,
@@ -24,14 +27,26 @@ parser.add_argument('degreeOfUncertainty', type=int,
 parser.add_argument('OnlyKnownCodons', help='TRUE or FALSE')
 parser.add_argument('SequenceLogoType', help='bit or probability')
 parser.add_argument('DataSetType', help='Redundant or NonRedundant')
-parser.add_argument('SeqLogo', help='file to save Sequence logo plot')
 
 
 args = parser.parse_args()
+if args.fastaFile.endswith('.fa') or args.fastaFile.endswith('.fasta'):
+    True
+else:
+    print(f'{args.fastaFile} must have extension .fasta or .fa')
+    parser.print_help()
+    exit()
 
+
+#VARS
+fastaFile = args.fastaFile
+
+if args.prefixFileName:
+    prefixFileName = args.prefixFileName
+else:
+    prefixFileName = re.sub('.fa(sta)?','',fastaFile)
 # GET SEQUENCES
 seqDict = {}
-fastaFile = args.fastaFile
 alignment = AlignIO.read(fastaFile, "fasta")
 SeqLength = alignment.get_alignment_length()
 AlphaColor = str(args.AlphaColor).lower()
@@ -178,14 +193,14 @@ for codon in matrixDict.keys():
 
 # Build Probability Matrix
 MatrixProb = pd.DataFrame(matrixDict)
-MatraixProb_name = 'probability_' + args.Matrix
+MatraixProb_name = prefixFileName + '.probability.matrix'
 MatrixProb.to_csv(sep="\t", header=True,
                   path_or_buf=MatraixProb_name, index=True)
 # print(f'Matrix Prob: \n{MatrixProb}\n')
 
 if args.SequenceLogoType.upper().strip() == "BIT":
     # Build probability symbol matrix
-    matrixSymbol_name = 'probability_' + args.Matrix + '_symbol'
+    matrixSymbol_name = prefixFileName + '.probability' + '.symbol'
     MatrixProbSymbol = pd.DataFrame(matrixSimb)
     MatrixProbSymbol.to_csv(sep="\t", header=True,
                             path_or_buf=matrixSymbol_name, index=True)
@@ -196,7 +211,7 @@ if args.SequenceLogoType.upper().strip() == "BIT":
         MatrixProbSymbol, matrix_type='probability', allow_nan=True)
     matrixBit = logomaker.transform_matrix(
         matrixValid, from_type='probability', to_type='information')
-    matrixBit_name = "bit_" + args.Matrix
+    matrixBit_name = prefixFileName + '.bits.matrix'
     matrixBit.to_csv(sep="\t", header=True,
                      path_or_buf=matrixBit_name, index=True)
     # print(f'Matrix de Bits:\n{matrixBit}\n')
@@ -213,7 +228,7 @@ if args.SequenceLogoType.upper().strip() == "BIT":
     # print(f'Symbols 2 codon: \n {Symbols2Codon}')
 
     bit_matrix_codon = matrixBit.rename(Symbols2Codon, axis='columns')
-    matrixCodonBit_name = "bit_" + args.Matrix
+    matrixCodonBit_name = prefixFileName + '.bits.matrix'
     bit_matrix_codon.to_csv(sep="\t", header=True,
                             path_or_buf=matrixCodonBit_name, index=True)
     # print(f'Bit matrix codon: \n{bit_matrix_codon}\n')
@@ -312,5 +327,5 @@ elif args.SequenceLogoType.upper().strip() == "PROBABILITY":
     ax.set_ylabel('probability')
     ax.set_ylim([0, 1])
 
-figsave_name = args.SeqLogo + '.png'
+figsave_name = prefixFileName + '.SeqLogo' + '.png'
 fig.savefig(figsave_name, transparent=False)
