@@ -32,9 +32,10 @@ parser.add_argument('DataSetType', help='Redundant or NonRedundant')
 
 args = parser.parse_args()
 
+#Checking that input file exists, and has the right extension
 if exists(args.fastaFile):
     if args.fastaFile.endswith('.fa') or args.fastaFile.endswith('.fasta'):
-        True
+        fastaFile = args.fastaFile
     else:
         print(f'ERROR: {args.fastaFile} must have extension .fasta or .fa')
         parser.print_help()
@@ -44,14 +45,13 @@ else:
     parser.print_help()
     exit()
 
-
-#VARS
-fastaFile = args.fastaFile
-
+#Did we get a prefix to create outfiles from the user?
+# If not use the basename of the input file as prefix
 if args.prefixFileName:
     prefixFileName = args.prefixFileName
 else:
     prefixFileName = re.sub('.fa(sta)?','',fastaFile)
+
 # GET SEQUENCES
 seqDict = {}
 alignment = AlignIO.read(fastaFile, "fasta")
