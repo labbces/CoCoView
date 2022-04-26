@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import logomaker
 from logomaker import Glyph
 from Bio import AlignIO
+from os.path import exists
 import re
 
 from sqlalchemy import true
@@ -30,10 +31,16 @@ parser.add_argument('DataSetType', help='Redundant or NonRedundant')
 
 
 args = parser.parse_args()
-if args.fastaFile.endswith('.fa') or args.fastaFile.endswith('.fasta'):
-    True
+
+if exists(args.fastaFile):
+    if args.fastaFile.endswith('.fa') or args.fastaFile.endswith('.fasta'):
+        True
+    else:
+        print(f'ERROR: {args.fastaFile} must have extension .fasta or .fa')
+        parser.print_help()
+        exit()
 else:
-    print(f'{args.fastaFile} must have extension .fasta or .fa')
+    print(f'ERROR: {args.fastaFile} does not exist')
     parser.print_help()
     exit()
 
