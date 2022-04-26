@@ -25,10 +25,9 @@ parser.add_argument('-i', '--imageTitle',
 parser.add_argument('-a', '--alphaColor', choices=['weblogo_protein', 'charge', 'chemistry',
                     'hydrophobicity'], help='Alphabet color scheme', default='weblogo_protein')
 parser.add_argument('-d', '--degreeOfUncertainty', type=float, default=0.0,
-                    help='Proportion of ambiguous nucleotides allowed in the sequences to use in the logo')
-parser.add_argument('OnlyKnownCodons', help='TRUE or FALSE')
+                    help='Proportion ofcd ambiguous nucleotides allowed in the sequences to use in the logo')
 parser.add_argument('-m', '--matrixLogoType', help='Type of matrix to built',
-                    default='probability', choices=['bit', 'probability'])
+                    default='bit', choices=['bit', 'probability'])
 parser.add_argument('-t', '--datasetType', help='whether to built a reduntand o non-redundant dataset before creating the logo',
                     default='redundant', choices=['redundant', 'nonredundant'])
 parser.add_argument('-l', '--logoFormat', help='Format of the sequence logo',
@@ -58,12 +57,12 @@ else:
     prefixFileName = re.sub('.fa(sta)?', '', fastaFile)
 
 # Did we get an image title  from the user?
-# If not use the basename of the input file with the string CodonLogo
+# If not use the basename of the input file with the string CoCoViewer
 if args.imageTitle:
-    imageTitle = args.imageTitle + ' ' + args.datasetType + ' CodonLogo'
+    imageTitle = args.imageTitle + ' ' + args.datasetType + ' CoCoViewer'
 else:
     imageTitle = re.sub('.fa(sta)?', '', fastaFile) + \
-        ' ' + args.datasetType + ' CodonLogo'
+        ' ' + args.datasetType + ' CoCoViewer'
     print(f'{imageTitle}')
 # GET SEQUENCES
 seqDict = {}
@@ -171,7 +170,7 @@ for seq, amount in seqDict.items():
 
         codons.append(codon)
     for codon_index in range(int((len(seq)) / ntAmount)):
-        if args.OnlyKnownCodons.upper().strip() == "FALSE":
+        if args.degreeOfUncertainty == 100:
             if codons[codon_index].upper() not in matrixDict.keys():
                 try:
                     Codon2Symbol[codons[codon_index]] = extraSymbols[newCodons]
@@ -222,11 +221,9 @@ MatrixProb.to_csv(sep="\t", header=True,
 
 if args.matrixLogoType.upper().strip() == "BIT":
     # Build probability symbol matrix
-    matrixSymbol_name = prefixFileName + '.' + \
-        args.datasetType + '.probability' + '.symbol'
     MatrixProbSymbol = pd.DataFrame(matrixSimb)
-    MatrixProbSymbol.to_csv(sep="\t", header=True,
-                            path_or_buf=matrixSymbol_name, index=True)
+    # matrixSymbol_name = prefixFileName + '.' + \args.datasetType + '.probability' + '.symbol'
+    #MatrixProbSymbol.to_csv(sep="\t", header=True, path_or_buf=matrixSymbol_name, index=True)
     # print(f'Matrix de Símbolos: \n{MatrixProbSymbol}\n')
 
     # Converting probability matrix to information (bits) matrix
