@@ -16,7 +16,6 @@ from Bio import AlignIO
 # ver como colocar numeros, true e false
 parser = argparse.ArgumentParser()
 parser.add_argument("fastaFile", help="path to fasta file")
-parser.add_argument("SeqLength", type=int, help="Expected sequence length")
 parser.add_argument("Matrix", help="file to save matrix")
 parser.add_argument('ImageTitle')
 parser.add_argument(
@@ -35,11 +34,12 @@ args = parser.parse_args()
 seqDict = {}
 fastaFile = args.fastaFile
 alignment = AlignIO.read(fastaFile, "fasta")
+SeqLength = alignment.get_alignment_length()
 AlphaColor = str(args.AlphaColor).lower()
 
 #Check that the alignment has complete codons, length should be multiple of 3
 
-if alignment.get_alignment_length() % 3 != 0:
+if SeqLength % 3 != 0:
     print(f'Your sequence length {args.SeqLength} is not a multiple of 3')
     exit()
 
@@ -49,9 +49,9 @@ for record in alignment:
     for nucleotide in record:
         if nucleotide.upper() not in "ATGC":
             notKownNucleotide += 1
-    degreeOfUncertainty = 100*notKownNucleotide/args.SeqLength
+    degreeOfUncertainty = 100*notKownNucleotide/SeqLength
     if degreeOfUncertainty <= args.degreeOfUncertainty:
-        if len(record.seq) == int(args.SeqLength):
+        if len(record.seq) == int(SeqLength):
             if args.DataSetType.upper().strip() == "REDUNDANT":
                 if str(record.seq) in seqDict.keys():
                     seqDict[str(record.seq)] = seqDict[str(record.seq)] + 1
@@ -234,7 +234,7 @@ elif args.SequenceLogoType.upper().strip() == "PROBABILITY":
 # DEFINNG GLYPHS PARAMETERS
 info2Glyph = {}
 p = 2
-for pos in range(0, int((args.SeqLength)/3)):
+for pos in range(0, int((SeqLength)/3)):
     # print(f'pos: \n{pos}\n')
     codonbits = {}
     floor = ceiling = 0
@@ -271,10 +271,10 @@ for codons in PreListInfo2Glyph:
         })
 # print(f'Glyph final list: \n{ListInfo2Glyph}\n')
 
-x = args.SeqLength/2
+x = SeqLength/2
 fig, ax = plt.subplots(figsize=[x, 4])
 # set bounding box
-ax.set_xlim([0.5, (args.SeqLength + 1)])
+ax.set_xlim([0.5, (SeqLength + 1)])
 ax.set_ylim([0, 6])
 
 
