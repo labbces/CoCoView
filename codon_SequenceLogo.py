@@ -9,7 +9,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import logomaker
 from logomaker import Glyph
-#from Bio import SeqIO
 from Bio import AlignIO
 
 # Using ArgParse to make easier use this script using command-line
@@ -45,11 +44,11 @@ if SeqLength % 3 != 0:
 
 
 for record in alignment:
-    notKownNucleotide = 0
+    notKnownNucleotide = 0
     for nucleotide in record:
         if nucleotide.upper() not in "ATGC":
-            notKownNucleotide += 1
-    degreeOfUncertainty = 100*notKownNucleotide/SeqLength
+            notKnownNucleotide += 1
+    degreeOfUncertainty = 100*notKnownNucleotide/SeqLength
     if degreeOfUncertainty <= args.degreeOfUncertainty:
         if len(record.seq) == int(SeqLength):
             if args.DataSetType.upper().strip() == "REDUNDANT":
@@ -75,11 +74,12 @@ for record in alignment:
 
 # Printing how many sequeces were used to construct the Graphs
 totalSeqs = sum(seqDict.values())
-print(
-    f'\nA total of {totalSeqs} sequence(s) was/were used to construct the codon sequence logo')
+
 if totalSeqs == 0:
-    print('No sequence within the given patterns was found, please review the SeqLength informed or the sequences in FASTA file')
+    print('All sequences were filtered out, nothing remained to generate the Codon Sequence Logo')
     exit()
+else:
+    print(f'\nA total of {totalSeqs} sequence(s) was/were used to construct the codon sequence logo')
 
 # IMPORTANT DICTS
 matrixDict = {'AAA': [], 'AAC': [], 'AAG': [], 'AAT': [], 'ACA': [], 'ACC': [], 'ACG': [], 'ACT': [], 'AGA': [],
