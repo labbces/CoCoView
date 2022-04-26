@@ -19,8 +19,8 @@ from sqlalchemy import true
 # ver como colocar numeros, true e false
 parser = argparse.ArgumentParser()
 parser.add_argument("fastaFile", help="path to fasta file, must have extension fasta, or fa")
-parser.add_argument("--prefixFileName", help="String to use as prefix of output file names, if not provided will use fastaFile as prefix")
-parser.add_argument('ImageTitle', help="String to use as title in the image")
+parser.add_argument('--prefixFileName', help="String to use as prefix of output file names, if not provided will use fastaFile as prefix")
+parser.add_argument('--imageTitle', help="String to use as title in the image")
 parser.add_argument(
     'AlphaColor', help='Alphabet color. "weblogo_protein", "charge", "chemistry", "hydrophobicity"')
 parser.add_argument('degreeOfUncertainty', type=int,
@@ -52,6 +52,13 @@ if args.prefixFileName:
 else:
     prefixFileName = re.sub('.fa(sta)?','',fastaFile)
 
+#Did we get an image title  from the user?
+# If not use the basename of the input file with the string CodonLogo
+if args.imageTitle:
+    imageTitle = args.imageTitle
+else:
+    imageTitle = re.sub('.fa(sta)?','',fastaFile) + ' CodonLogo'
+    print(f'{imageTitle}')
 # GET SEQUENCES
 seqDict = {}
 alignment = AlignIO.read(fastaFile, "fasta")
@@ -324,7 +331,7 @@ list(
         ListInfo2Glyph
     )
 )
-title = f'{args.ImageTitle}'
+title = f'{imageTitle}'
 ax.set_title(title)
 ax.set_xlabel('length')
 
