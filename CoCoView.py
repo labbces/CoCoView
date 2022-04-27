@@ -348,5 +348,5 @@ elif args.matrixLogoType.upper().strip() == "PROBABILITY":
     ax.set_ylim([0, 1])
 
 figsave_name = prefixFileName + '.' + \
-    args.datasetType + '.SeqLogo' + '.' + args.logoFormat
+    args.datasetType + '.' + args.matrixLogoType + '.CoCoView' + '.' + args.logoFormat
 fig.savefig(figsave_name, transparent=False, format=args.logoFormat)
