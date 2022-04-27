@@ -1,4 +1,4 @@
-# CodonSequenceLogo
+# CoCoView
 ## Brief explanation 
 XXXX is a single python v.3 script used to generate sequence logos based on codons. 
 
