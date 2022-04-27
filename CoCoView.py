@@ -54,7 +54,7 @@ else:
 if args.prefixFileName:
     prefixFileName = args.prefixFileName
 else:
-    prefixFileName = re.sub('.fa(sta)?', '', fastaFile)
+    prefixFileName = re.sub('.fa(sta)?$', '', fastaFile)
 
 # Did we get an image title  from the user?
 # If not use the basename of the input file with the string CoCoViewer
