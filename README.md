@@ -45,11 +45,35 @@ Once you have installed the script, all its dependencies, and have the nucleotid
 **Defaults:**
 | Modulator | Abbreviation | Default |
 | --- | --- | --- |
+| prefixFileName | -p | Declared fastaFile name |
 | alphaColor | -a | weblogo_protein |
 | degreeOfUncertainity | -d | 0.0 |
 | matrixLogoType | -m | bit | 
 | datasetType | -t | redundant | 
 | logoFormat | -l | png |
 
-*!! See the modulators in more details below !!*
+## Modulators - Details:
+_! Remember: All the modulators are optional, if not informed on the command-line the default will be applied._
+
+### --prefixFileName [-p]
+  CoCoView produces two (matrix type selected as 'Probability') or three (for matrix type selected as 'Bit') output files.
+  The **sequence logo** generated for both cases will be saved as **prefixFileName + datasetType + matrixLogoType + "CoCoView" + logoFormat**. Another file generated for both cases is the **probability matrix**, it will be saved as **prefixFileName + datasetType + "probability.matrix"**
+  Especifically for matrix type as "bit" the **bit matrix** would be generated and saved as **prefixFileName + datasetType + "bits.matrix"**.
+ 
+| Output files | Name Pattern |
+| --- | --- |
+| Sequence logo | prefixFileName + datasetType + matrixLogoType + "CoCoView" + logoFormat |
+| Probability Matrix | prefixFileName + datasetType + "probability.matrix |
+| Bit Matrix | prefixFileName + datasetType + "bits.matrix |
+
+ _! (see --matrixLogoType, --datasetType, and --logoFormat)._
+
+### imageTitle 	[-i]
+This argument is a string that will appear as the title at the top of the sequence logo. If not provided by the user a title will be automatically generated from the input file name
+
+
+
+
+
+
 
