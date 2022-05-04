@@ -2,6 +2,20 @@
 ## Brief explanation 
 CoCoView is a single python v.3 script used to generate sequence logos using codons, which allows for a more detailed analysis of sequence conservation. 
 
+## Table of contents
+* [Before running](https://github.com/labbces/CoCoView#before-running)
+  * [Specifications of the sequences](https://github.com/labbces/CoCoView#specifications-of-the-sequences)
+* [How to run](https://github.com/labbces/CoCoView#how-to-run)
+* [Modulators - Details](https://github.com/labbces/CoCoView#modulators---details)
+  * [--prefixFileName](https://github.com/labbces/CoCoView#--prefixfilename--p)
+  * [--imageTitle](https://github.com/labbces/CoCoView#imagetitle--i) 
+  * [--alphaColor](https://github.com/labbces/CoCoView/edit/main/README.md#--alphacolor--a)
+  * [--degreeOfUncertainty](https://github.com/labbces/CoCoView/edit/main/README.md#--degreeofuncertainty--d)
+  * [--matrixLogoType](https://github.com/labbces/CoCoView/edit/main/README.md#--matrixlogotype--m)
+  * [--datasetType](https://github.com/labbces/CoCoView/edit/main/README.md#--datasettype--t)
+  * [--logoFormat](https://github.com/labbces/CoCoView/edit/main/README.md#--logoformat--l)
+
+
 ## Before running:
 CoCoView is a python script that requires **python v.3 or greater** (it has been tested on python v3.7 and v3.9). Other than that, there are two needs to run this script: **Nucleotide sequences in FASTA file format** (see its specifications below) and **the script [CoCoView.py](https://github.com/labbces/CoCoView/blob/main/CoCoView.py)**. Besides that, CoCoView relies on external libraries (**argparse, pandas, matplotlib, Logomaker, and biopython**) that should be installed in advance. All of them are available to be installed using PyPI:
 
@@ -68,12 +82,28 @@ _! Remember: All the modulators are optional, if not informed on the command-lin
 
  _! (see --matrixLogoType, --datasetType, and --logoFormat)._
 
-### imageTitle 	[-i]
+### --imageTitle [-i]
 This argument is a string that will appear as the title at the top of the sequence logo. If not provided by the user a title will be automatically generated from the input file name
 
+### --alphaColor [-a]
+Codons are collored accrding to the amino acid it encodes. The color pallets available are: "weblogo_protein (default)", "charge", "chemistry" and "hydrophobicity", demonstred bellow:
+![alt text](https://github.com/labbces/CoCoView/blob/main/images/AlphaColors.png)
 
+## --degreeOfUncertainty [-d]
+As presented in [Specifications of the sequences](https://github.com/labbces/CoCoView#specifications-of-the-sequences), ambiguous nucleotides are allowed in the input sequence once they follow modern IUPAC nucleotide code nomenclature. However, these sequences can be filtered based on the ambiguous nucleotides present in the sequence using the degree of Uncertainty property. 
+The --degreeOfUncertainty is a float number between 0 and 100, based on this number CoCoView removes the sequences which have a proportion of ambiguous nucleotides greater than it.
+For example, a degreeOfUncertainty set to 30% (that is, set as 30) will exclude all sequences of length equal to 12 that have at least 4 ambiguous nucleotides.
 
+## --matrixLogoType [-m]
+--matrixLogoType has 'bit' and 'probability' as options. 
+The original sequence logo proposed by [Schneider and Stephens (1990](https://dx.doi.org/10.1093%2Fnar%2F18.20.6097) utilizes the bit as the unit of conservation measurement, so it has major conceptual support. The state "bit" is the default option. 
+However, to generate the 'bit' sequence logo, CoCoView constructs first a probability matrix that can be used to define the graphic representing the frequency of each codon at each position. It's important to punctuate the probability sequence logo is not supported by Schneider and Stephens's original proposition, it is a measurement of _frequency_, not conservation.
 
+## --datasetType [-t]
+ If duplicated sequences are present in the input dataset, setting this argument to ‘nonreduntant’ will remove duplicates from the analyses. This option is useful for small datasets. When very large datasets are used (thousands of sequences with hundreds/thousands of residues), users are advised to use third-party tools to generate non-redundant sequence sets, eg., cd-hit or UCLUST. Setting ‘nonreduntant’ may be of interest when the user wants to visualize rare variants. Default value ‘reduntant’.
+
+## --logoFormat [-l]
+The format in which the sequence logo will be saved. Options: 'png' and 'pdf'.
 
 
 
