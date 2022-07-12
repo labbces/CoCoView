@@ -7,6 +7,7 @@
 import argparse
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
 import logomaker
 from logomaker import Glyph
 from Bio import AlignIO
@@ -375,6 +376,7 @@ list(
 title = f'{imageTitle}'
 ax.set_title(title)
 ax.set_xlabel('length')
+ax.xaxis.set_major_locator(MaxNLocator(integer=True))
 
 if args.matrixLogoType.upper().strip() == "BIT":
     ax.set_ylabel('information (bits)')
