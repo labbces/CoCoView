@@ -12,6 +12,7 @@ from logomaker import Glyph
 from Bio import AlignIO
 from os.path import exists
 import re
+import json
 
 # Using ArgParse to make easier use this script using command-line
 # ver como colocar numeros, true e false
@@ -23,7 +24,7 @@ parser.add_argument('-p', '--prefixFileName',
 parser.add_argument('-i', '--imageTitle',
                     help="String to use as title in the image")
 parser.add_argument('-a', '--alphaColor', choices=['weblogo_protein', 'charge', 'chemistry',
-                    'hydrophobicity'], help='Alphabet color scheme', default='weblogo_protein')
+                    'hydrophobicity','custom'], help='Alphabet color scheme', default='weblogo_protein')
 parser.add_argument('-d', '--degreeOfUncertainty', type=float, default=0.0,
                     help='Proportion ofcd ambiguous nucleotides allowed in the sequences to use in the logo')
 parser.add_argument('-m', '--matrixLogoType', help='Type of matrix to built',
@@ -32,6 +33,7 @@ parser.add_argument('-t', '--datasetType', help='whether to built a reduntand o 
                     default='redundant', choices=['redundant', 'nonredundant'])
 parser.add_argument('-l', '--logoFormat', help='Format of the sequence logo',
                     default='png', choices=['png', 'pdf'])
+parser.add_argument('-c', '--customPaletteFile', help='JSON file with a custom palette to use in the logo')
 
 
 args = parser.parse_args()
@@ -48,6 +50,29 @@ else:
     print(f'ERROR: {args.fastaFile} does not exist')
     parser.print_help()
     exit()
+
+if args.alphaColor == 'custom' and not(exists(args.customPaletteFile)):
+    print(f'ERROR: When choosing --alphaColor custom you must provide an existing JSON file with the custom palette')
+    parser.print_help()
+    exit()
+
+#Check if the user wants and can use a custom palette file
+if args.customPaletteFile: #Check if user called the argument
+    if args.alphaColor != 'custom':
+        print(f'ERROR: If proding a JSON file with a color pallete, you must use the option --alphaColor set to \'custom\'')
+        parser.print_help()
+        exit()
+    else:
+        if exists(args.customPaletteFile): #Check whether the file exists
+            print(args.customPaletteFile)
+            try:
+                with open(args.customPaletteFile, 'r') as f:
+                    customPalette = json.load(f)
+                    print(customPalette)
+            except ValueError as e:
+                print(f'ERROR: Invalid JSON in fille {args.customPaletteFile}')
+                parser.print_help()
+                exit()
 
 # Did we get a prefix to create outfiles from the user?
 # If not use the basename of the input file as prefix
@@ -159,6 +184,9 @@ color_palett = {
         'TCG': 'lime', 'AGT': 'lime', 'AGC': 'lime', 'ACT': 'lime', 'ACC': 'lime', 'ACA': 'lime', 'ACG': 'lime', 'TAT': 'lime', 'TAC': 'lime', 'GAT': 'red', 'GAC': 'red', 'GAA': 'red', 'GAG': 'red', 'CAT': 'mediumblue', 'CAC': 'mediumblue', 'AAA': 'mediumblue', 'AAG': 'mediumblue', 'CGT': 'mediumblue', 'CGC': 'mediumblue', 'CGA': 'mediumblue', 'CGG': 'mediumblue', 'AGA': 'mediumblue', 'AGG': 'mediumblue', 'AAT': 'purple', 'AAC': 'purple', 'CAA': 'purple', 'CAG': 'purple', 'TAA': 'peru', 'TAG': 'gold', 'TGA': 'azure'}
 }
 
+if args.customPaletteFile:
+    color_palett.update(customPalette)
+    
 # DEFINING THE POSITIONS OF THE CODONS IN THE SEQUENCE
 posDict = {}
 codons = []
