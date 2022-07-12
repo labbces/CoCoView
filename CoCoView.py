@@ -51,8 +51,15 @@ else:
     parser.print_help()
     exit()
 
-if args.alphaColor == 'custom' and not(exists(args.customPaletteFile)):
-    print(f'ERROR: When choosing --alphaColor custom you must provide an existing JSON file with the custom palette')
+if args.alphaColor == 'custom' and args.customPaletteFile:
+    if exists(args.customPaletteFile):
+        True
+    else:
+        print(f'ERROR: When choosing --alphaColor custom you must provide an existing JSON file with the custom palette')
+        parser.print_help()
+        exit()
+else:
+    print(f'ERROR: You must use both \'--alphaColor custom\' and \'--customPaletteFile file.json\'')
     parser.print_help()
     exit()
 
