@@ -59,10 +59,13 @@ if args.alphaColor == 'custom' and args.customPaletteFile:
         print(f'ERROR: When choosing --alphaColor custom you must provide an existing JSON file with the custom palette')
         parser.print_help()
         exit()
+        
+elif args.alphaColor in ['weblogo_protein', 'charge', 'chemistry','hydrophobicity']:
+    True
+    
 else:
     print(f'ERROR: You must use both \'--alphaColor custom\' and \'--customPaletteFile file.json\'')
-    parser.print_help()
-    exit()
+    
 
 #Check if the user wants and can use a custom palette file
 if args.customPaletteFile: #Check if user called the argument
