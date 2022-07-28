@@ -8,13 +8,13 @@ CoCoView is a single python v.3 script used to generate sequence logos using cod
 * [How to run](https://github.com/labbces/CoCoView#how-to-run)
 * [Modulators - Details](https://github.com/labbces/CoCoView#modulators---details)
   * [--prefixFileName](https://github.com/labbces/CoCoView#--prefixfilename--p)
-  * [--imageTitle](https://github.com/labbces/CoCoView#imagetitle--i) 
+  * [--imageTitle](https://github.com/labbces/CoCoView#--imagetitle--i) 
   * [--alphaColor](https://github.com/labbces/CoCoView#--alphacolor--a)
   * [--customPaletteFile](https://github.com/labbces/CoCoView#--custompalettefile--c)
-  * [--degreeOfUncertainty](https://github.com/labbces/CoCoView/edit/main/README.md#--degreeofuncertainty--d)
-  * [--matrixLogoType](https://github.com/labbces/CoCoView/edit/main/README.md#--matrixlogotype--m)
-  * [--datasetType](https://github.com/labbces/CoCoView/edit/main/README.md#--datasettype--t)
-  * [--logoFormat](https://github.com/labbces/CoCoView/edit/main/README.md#--logoformat--l)
+  * [--degreeOfUncertainty](https://github.com/labbces/CoCoView#--degreeofuncertainty--d)
+  * [--matrixLogoType](https://github.com/labbces/CoCoView#--matrixlogotype--m)
+  * [--datasetType](https://github.com/labbces/CoCoView#--datasettype--t)
+  * [--logoFormat](https://github.com/labbces/CoCoView#--logoformat--l)
 
 
 ## Before running:
@@ -89,10 +89,10 @@ This argument is a string that will appear as the title at the top of the sequen
 ### --alphaColor [-a]
 Codons are collored accrding to the amino acid it encodes. The color pallets available are: "weblogo_protein (default)", "charge", "chemistry" and "hydrophobicity", demonstred bellow:
 ![alt text](https://github.com/labbces/CoCoView/blob/main/images/AlphaColors.png)
-To add a custom pallet, set alphaColor as "custom" and add a json file in [-c]() option.
+To add a custom pallet, set alphaColor as "custom" and add a json file in [-c (customPalleteFile)](https://github.com/labbces/CoCoView#--custompalettefile--c) option.
 
 ### --customPaletteFile [-c]
-To use different color pattern, it is possible to add a customable .json file, selecting "custom" to --alphaColor [-a]() and the path to the JSON file after -c option. 
+To use different color pattern, it is possible to add a customized one, selecting "custom" to --alphaColor [(-a)](https://github.com/labbces/CoCoView#--alphacolor--a) and the path to a JSON (.json) file to -c option. 
 
 
 ### --degreeOfUncertainty [-d]
