@@ -9,8 +9,8 @@ CoCoView is a single python v.3 script used to generate sequence logos using cod
 * [Modulators - Details](https://github.com/labbces/CoCoView#modulators---details)
   * [--prefixFileName](https://github.com/labbces/CoCoView#--prefixfilename--p)
   * [--imageTitle](https://github.com/labbces/CoCoView#imagetitle--i) 
-  * [--alphaColor](https://github.com/labbces/CoCoView/edit/main/README.md#--alphacolor--a)
-  * [----customPaletteFile]()
+  * [--alphaColor](https://github.com/labbces/CoCoView#--alphacolor--a)
+  * [--customPaletteFile](https://github.com/labbces/CoCoView#--custompalettefile--c)
   * [--degreeOfUncertainty](https://github.com/labbces/CoCoView/edit/main/README.md#--degreeofuncertainty--d)
   * [--matrixLogoType](https://github.com/labbces/CoCoView/edit/main/README.md#--matrixlogotype--m)
   * [--datasetType](https://github.com/labbces/CoCoView/edit/main/README.md#--datasettype--t)
@@ -95,20 +95,20 @@ To add a custom pallet, set alphaColor as "custom" and add a json file in [-c]()
 To use different color pattern, it is possible to add a customable .json file, selecting "custom" to --alphaColor [-a]() and the path to the JSON file after -c option. 
 
 
-## --degreeOfUncertainty [-d]
+### --degreeOfUncertainty [-d]
 As presented in [Specifications of the sequences](https://github.com/labbces/CoCoView#specifications-of-the-sequences), ambiguous nucleotides are allowed in the input sequence once they follow modern IUPAC nucleotide code nomenclature. However, these sequences can be filtered based on the ambiguous nucleotides present in the sequence using the degree of Uncertainty property. 
 The --degreeOfUncertainty is a float number between 0 and 100, based on this number CoCoView removes the sequences which have a proportion of ambiguous nucleotides greater than it.
 For example, a degreeOfUncertainty set to 30% (that is, set as 30) will exclude all sequences of length equal to 12 that have at least 4 ambiguous nucleotides.
 
-## --matrixLogoType [-m]
+### --matrixLogoType [-m]
 --matrixLogoType has 'bit' and 'probability' as options. 
 The original sequence logo proposed by [Schneider and Stephens (1990](https://dx.doi.org/10.1093%2Fnar%2F18.20.6097) utilizes the bit as the unit of conservation measurement, so it has major conceptual support. The state "bit" is the default option. 
 However, to generate the 'bit' sequence logo, CoCoView constructs first a probability matrix that can be used to define the graphic representing the frequency of each codon at each position. It's important to punctuate the probability sequence logo is not supported by Schneider and Stephens's original proposition, it is a measurement of _frequency_, not conservation.
 
-## --datasetType [-t]
+### --datasetType [-t]
  If duplicated sequences are present in the input dataset, setting this argument to ‘nonreduntant’ will remove duplicates from the analyses. This option is useful for small datasets. When very large datasets are used (thousands of sequences with hundreds/thousands of residues), users are advised to use third-party tools to generate non-redundant sequence sets, eg., cd-hit or UCLUST. Setting ‘nonreduntant’ may be of interest when the user wants to visualize rare variants. Default value ‘reduntant’.
 
-## --logoFormat [-l]
+### --logoFormat [-l]
 The format in which the sequence logo will be saved. Options: 'png' and 'pdf'.
 
 
