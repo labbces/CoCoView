@@ -15,6 +15,9 @@ CoCoView is a single python v.3 script used to generate sequence logos using cod
   * [--matrixLogoType](https://github.com/labbces/CoCoView#--matrixlogotype--m)
   * [--datasetType](https://github.com/labbces/CoCoView#--datasettype--t)
   * [--logoFormat](https://github.com/labbces/CoCoView#--logoformat--l)
+ * [Brief Examples](https://github.com/labbces/CoCoView#brief-examples)
+   * [Brief Example 1](https://github.com/labbces/CoCoView#brief-example-1)
+
 
 
 ## Before running:
@@ -111,10 +114,10 @@ However, to generate the 'bit' sequence logo, CoCoView constructs first a probab
 ### --logoFormat [-l]
 The format in which the sequence logo will be saved. Options: 'png' and 'pdf'.
 
-## Brief Exemples
-### Brief Exemple 1
+## Brief Examples
+### Brief Example 1
 
-! Files generated from exemple 1 can be found in [exemple 1 files](https://github.com/labbces/CoCoView/tree/main/test/example1)
+! Files generated from example 1 can be found in [example 1 files](https://github.com/labbces/CoCoView/tree/main/test/example1)
 
 The SARS-Cov-2 genome encodes two polyproteins that are cleaved post-translationally by proteases. CoCoView can be used to visualize the codon conservation of the protease cleavage sites. We generated a Codon conservation sequence logo from 209,219 24bp-long sequences collected from around the world, representing the four residues up- and downstream of the cleavage site between nsp6 and nsp7. 
 The code ran was:
