@@ -97,6 +97,8 @@ To add a custom pallet, set alphaColor as "custom" and add a json file in [-c (c
 ### --customPaletteFile [-c]
 To use different color pattern, it is possible to add a customized one, selecting "custom" to --alphaColor [(-a)](https://github.com/labbces/CoCoView#--alphacolor--a) and the path to a JSON (.json) file to -c option. 
 
+An option for a custom pallet can be found in [customPallet.json](https://github.com/labbces/CoCoView/blob/main/customPalette.json)
+
 
 ### --degreeOfUncertainty [-d]
 As presented in [Specifications of the sequences](https://github.com/labbces/CoCoView#specifications-of-the-sequences), ambiguous nucleotides are allowed in the input sequence once they follow modern IUPAC nucleotide code nomenclature. However, these sequences can be filtered based on the ambiguous nucleotides present in the sequence using the degree of Uncertainty property. 
@@ -117,11 +119,27 @@ The format in which the sequence logo will be saved. Options: 'png' and 'pdf'.
 ## Brief Examples
 ### Brief Example 1
 
-! Files generated from example 1 can be found in [example 1 files](https://github.com/labbces/CoCoView/tree/main/test/example1)
+! Files used and generated for and from example 1 can be found in [example 1 files](https://github.com/labbces/CoCoView/tree/main/test/example1)
 
 The SARS-Cov-2 genome encodes two polyproteins that are cleaved post-translationally by proteases. CoCoView can be used to visualize the codon conservation of the protease cleavage sites. We generated a Codon conservation sequence logo from 209,219 24bp-long sequences collected from around the world, representing the four residues up- and downstream of the cleavage site between nsp6 and nsp7. 
+
 The code ran was:
 
 ```
-python3 CoCoView.py ./CoCoView/test/Bordas_World_6.nt.fasta -p "World6" -i "World 6 : nsp6/nsp7 nonredundant" -a "weblogo_protein" -d 1 -m "bit" ´t "nonredundant" -l "png" 
+python3 CoCoView.py ./CoCoView/examples/example1/Bordas_World_6.nt.fasta -p "World6" -i "World 6 : nsp6/nsp7 nonredundant" -a "weblogo_protein" -d 1 -m "bit" ´t "nonredundant" -l "png" 
 ```
+### Brief Example 2
+
+! Files used and generated for and from example 2 can be found in [example 2 files](https://github.com/labbces/CoCoView/tree/main/examples/example2)
+
+Transcription factors are proteins that bind DNA and regulate the expression of target genes. AP2 is a transcription factor involved in the regulation of growth and development, fruit ripening, defense response, and metabolism in plants. As transcription factors are usually represented with Sequence Logos, we generated a codon sequence logo from this AP2 gene.
+
+```
+python3 CoCoView.py examples/example2/AP2.Nta.veryShort.nt.aln.fa -p "Nicotiana_tabacumAP2" -i "Nicotiana_tabacum - AP2" -a "custom" -c customPalette.json -d 0 -m bit -t redundant -l png
+```
+
+To illustrate the benefits of a per-codon variation representation, we generated the same sequence logos using a nucleotide based sequence logo generator. At the 10th to 12th positions, which represent the 4th codon of that region of the CDS, one could incorrectly draw the conclusion that the triplet “GAT" is common at that position, based on the conservation of the individual nucleotides. However, when looking at the sequence logo based on condons (generated with CoCoView), it is clear that “GAT" is not common at all at this position. 
+ 
+ [Comparison image](https://github.com/labbces/CoCoView/blob/main/images/Comparison%20image.png)
+
+
