@@ -17,6 +17,7 @@ CoCoView is a single python v.3 script used to generate sequence logos using cod
   * [--logoFormat](https://github.com/labbces/CoCoView#--logoformat--l)
  * [Brief Examples](https://github.com/labbces/CoCoView#brief-examples)
    * [Brief Example 1](https://github.com/labbces/CoCoView#brief-example-1)
+   * [Brief Example 2](https://github.com/labbces/CoCoView#brief-example-2)
 
 
 
