@@ -111,5 +111,14 @@ However, to generate the 'bit' sequence logo, CoCoView constructs first a probab
 ### --logoFormat [-l]
 The format in which the sequence logo will be saved. Options: 'png' and 'pdf'.
 
+## Brief Exemples
+### Brief Exemple 1
 
+! Files generated from exemple 1 can be found in [exemple 1 files](https://github.com/labbces/CoCoView/tree/main/test/example1)
 
+The SARS-Cov-2 genome encodes two polyproteins that are cleaved post-translationally by proteases. CoCoView can be used to visualize the codon conservation of the protease cleavage sites. We generated a Codon conservation sequence logo from 209,219 24bp-long sequences collected from around the world, representing the four residues up- and downstream of the cleavage site between nsp6 and nsp7. 
+The code ran was:
+
+```
+python3 CoCoView.py ./CoCoView/test/Bordas_World_6.nt.fasta -p "World6" -i "World 6 : nsp6/nsp7 nonredundant" -a "weblogo_protein" -d 1 -m "bit" ´t "nonredundant" -l "png" 
+```
