@@ -10,6 +10,7 @@ CoCoView is a single python v.3 script used to generate sequence logos using cod
   * [--prefixFileName](https://github.com/labbces/CoCoView#--prefixfilename--p)
   * [--imageTitle](https://github.com/labbces/CoCoView#imagetitle--i) 
   * [--alphaColor](https://github.com/labbces/CoCoView/edit/main/README.md#--alphacolor--a)
+  * [----customPaletteFile]()
   * [--degreeOfUncertainty](https://github.com/labbces/CoCoView/edit/main/README.md#--degreeofuncertainty--d)
   * [--matrixLogoType](https://github.com/labbces/CoCoView/edit/main/README.md#--matrixlogotype--m)
   * [--datasetType](https://github.com/labbces/CoCoView/edit/main/README.md#--datasettype--t)
@@ -88,6 +89,11 @@ This argument is a string that will appear as the title at the top of the sequen
 ### --alphaColor [-a]
 Codons are collored accrding to the amino acid it encodes. The color pallets available are: "weblogo_protein (default)", "charge", "chemistry" and "hydrophobicity", demonstred bellow:
 ![alt text](https://github.com/labbces/CoCoView/blob/main/images/AlphaColors.png)
+To add a custom pallet, set alphaColor as "custom" and add a json file in [-c]() option.
+
+### --customPaletteFile [-c]
+To use different color pattern, it is possible to add a customable .json file, selecting "custom" to --alphaColor [-a]() and the path to the JSON file after -c option. 
+
 
 ## --degreeOfUncertainty [-d]
 As presented in [Specifications of the sequences](https://github.com/labbces/CoCoView#specifications-of-the-sequences), ambiguous nucleotides are allowed in the input sequence once they follow modern IUPAC nucleotide code nomenclature. However, these sequences can be filtered based on the ambiguous nucleotides present in the sequence using the degree of Uncertainty property. 
