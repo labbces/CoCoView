@@ -129,6 +129,8 @@ The code ran was:
 ```
 python3 CoCoView.py ./CoCoView/examples/example1/Bordas_World_6.nt.fasta -p "World6" -i "World 6 : nsp6/nsp7 nonredundant" -a "weblogo_protein" -d 1 -m "bit" ´t "nonredundant" -l "png" 
 ```
+![alt text](https://github.com/labbces/CoCoView/blob/main/test/example1/World6.nonredundant.SeqLogo.png?raw=true)
+
 ### Brief Example 2
 
 ! Files used and generated for and from example 2 can be found in [example 2 files](https://github.com/labbces/CoCoView/tree/main/examples/example2)
@@ -138,9 +140,11 @@ Transcription factors are proteins that bind DNA and regulate the expression of 
 ```
 python3 CoCoView.py examples/example2/AP2.Nta.veryShort.nt.aln.fa -p "Nicotiana_tabacumAP2" -i "Nicotiana_tabacum - AP2" -a "custom" -c customPalette.json -d 0 -m bit -t redundant -l png
 ```
+![alt text](https://github.com/labbces/CoCoView/blob/main/examples/example2/Nicotiana_tabacumAP2.redundant.bit.CoCoView.png?raw=true)
+
 
 To illustrate the benefits of a per-codon variation representation, we generated the same sequence logos using a nucleotide based sequence logo generator. At the 10th to 12th positions, which represent the 4th codon of that region of the CDS, one could incorrectly draw the conclusion that the triplet “GAT" is common at that position, based on the conservation of the individual nucleotides. However, when looking at the sequence logo based on condons (generated with CoCoView), it is clear that “GAT" is not common at all at this position. 
  
- [Comparison image](https://github.com/labbces/CoCoView/blob/main/images/Comparison%20image.png)
+![alt text](https://github.com/labbces/CoCoView/blob/main/images/Comparison%20image.png)
 
 
